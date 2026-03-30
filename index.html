@@ -37,8 +37,14 @@ a:hover { color: #06b6d4; border-bottom-color: #06b6d4; }
 .q-options { list-style: none; padding: 0; margin-bottom: 16px; }
 .q-options li { padding: 10px 14px; margin-bottom: 6px; border-radius: 8px; background: rgba(30, 40, 65, 0.6); border: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; color: #9ba3b8; }
 .q-options li.correct { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
-.q-explain { background: rgba(99, 102, 241, 0.08); border-left: 3px solid #6366f1; padding: 16px 20px; border-radius: 0 10px 10px 0; margin-top: 12px; }
-.q-explain p { font-size: 0.92rem; color: #a5b4fc; white-space: pre-line; }
+.q-explain { margin-top: 12px; }
+.q-explain-item { padding: 14px 18px; border-radius: 10px; margin-bottom: 10px; font-size: 0.92rem; line-height: 1.75; }
+.q-explain-item.correct-exp { background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; }
+.q-explain-item.correct-exp .exp-label { color: #6ee7b7; }
+.q-explain-item.wrong-exp { background: rgba(239, 68, 68, 0.06); border-left: 3px solid rgba(239, 68, 68, 0.4); }
+.q-explain-item.wrong-exp .exp-label { color: #fca5a5; }
+.exp-label { font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; display: block; }
+.exp-text { color: #b4bcd0; }
 details { cursor: pointer; }
 details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding: 8px 0; }
 .footer { margin-top: 60px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; color: #6b7280; font-size: 0.9rem; }
@@ -98,10 +104,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: A CloudWatch composite alarm lets you combine the states of multiple metric alarms using Boolean logic (AND/OR). By creating one metric alarm for CPU &gt; 80% and another for healthy host count &lt; 2, then combining them with AND in a composite alarm, the team receives a single SNS notification only when both conditions are simultaneously true.
-- Why A is wrong: Composite alarms evaluate alarm states, not raw metric values. Metric math can combine metrics into a single expression, but it cannot enforce 'both thresholds breached at the same time' logic across unrelated metrics the way composite alarms can.
-- Why B is wrong: Two separate alarms would each fire independently. The team would receive two separate notifications and could not enforce the requirement that both conditions must be true at the same time before alerting.
-- Why D is wrong: EventBridge can react to CloudWatch alarm state changes, but it does not evaluate metric thresholds or enforce AND logic between alarm conditions. It is a routing service, not a metric evaluation engine.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">A CloudWatch composite alarm lets you combine the states of multiple metric alarms using Boolean logic (AND/OR). By creating one metric alarm for CPU &gt; 80% and another for healthy host count &lt; 2, then combining them with AND in a composite alarm, the team receives a single SNS notification only when both conditions are simultaneously true.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Composite alarms evaluate alarm states, not raw metric values. Metric math can combine metrics into a single expression, but it cannot enforce 'both thresholds breached at the same time' logic across unrelated metrics the way composite alarms can.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Two separate alarms would each fire independently. The team would receive two separate notifications and could not enforce the requirement that both conditions must be true at the same time before alerting.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">EventBridge can react to CloudWatch alarm state changes, but it does not evaluate metric thresholds or enforce AND logic between alarm conditions. It is a routing service, not a metric evaluation engine.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -115,10 +121,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why C is correct: A CloudWatch alarm with a 1-minute period and 5 consecutive evaluation periods (datapoints to alarm = 5) means the alarm triggers after CPU exceeds 80% for 5 consecutive minutes. Linking the alarm action directly to an Auto Scaling policy provides automated capacity adjustment with zero custom code.
-- Why A is wrong: A 5-minute period with 1 evaluation period means the alarm triggers after a single 5-minute average exceeds the threshold. This only checks one data point, so a brief spike could trigger scaling, and it doesn't confirm the issue persists for 5 consecutive minutes.
-- Why B is wrong: Building a custom Lambda polling solution replicates what CloudWatch alarms and Auto Scaling policies already provide natively. This adds significant operational overhead (code maintenance, IAM permissions, error handling) for no benefit.
-- Why D is wrong: CloudTrail logs API calls, not performance metrics. It cannot detect high CPU utilization. CloudWatch is the correct service for metric-based monitoring.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why C is correct</span><span class="exp-text">A CloudWatch alarm with a 1-minute period and 5 consecutive evaluation periods (datapoints to alarm = 5) means the alarm triggers after CPU exceeds 80% for 5 consecutive minutes. Linking the alarm action directly to an Auto Scaling policy provides automated capacity adjustment with zero custom code.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">A 5-minute period with 1 evaluation period means the alarm triggers after a single 5-minute average exceeds the threshold. This only checks one data point, so a brief spike could trigger scaling, and it doesn't confirm the issue persists for 5 consecutive minutes.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Building a custom Lambda polling solution replicates what CloudWatch alarms and Auto Scaling policies already provide natively. This adds significant operational overhead (code maintenance, IAM permissions, error handling) for no benefit.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">CloudTrail logs API calls, not performance metrics. It cannot detect high CPU utilization. CloudWatch is the correct service for metric-based monitoring.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -133,11 +139,11 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why A is correct: gp3 volumes allow you to independently provision throughput up to 1,000 MiB/s, separate from volume size or IOPS. Since the bottleneck is the default 125 MiB/s throughput limit, increasing provisioned throughput directly resolves the issue.
-- Why E is correct: Even if the volume supports higher throughput, the EC2 instance must be EBS-optimized with sufficient EBS bandwidth to deliver that throughput. Both the volume and the instance must support the required throughput for the improvement to take effect.
-- Why B is wrong: IOPS (I/O operations per second) governs the number of read/write operations, not the data transfer rate (MiB/s). For large sequential file writes like video transcoding, throughput is the bottleneck, not IOPS. Increasing IOPS would not resolve the 125 MiB/s ceiling.
-- Why C is wrong: io2 volumes are designed for latency-sensitive, high-IOPS workloads such as databases. While io2 Block Express supports up to 4,000 MiB/s throughput, it is significantly more expensive than gp3 and over-provisioned for this use case. gp3 with increased throughput is the cost-effective solution.
-- Why D is wrong: EBS Multi-Attach is only available for io1 and io2 Provisioned IOPS volumes, not gp3. It is designed for clustered applications that need concurrent access from multiple instances in the same AZ, not for improving write throughput from a single instance.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why A is correct</span><span class="exp-text">gp3 volumes allow you to independently provision throughput up to 1,000 MiB/s, separate from volume size or IOPS. Since the bottleneck is the default 125 MiB/s throughput limit, increasing provisioned throughput directly resolves the issue.</span></div>
+<div class="q-explain-item correct-exp"><span class="exp-label">✓ Why E is correct</span><span class="exp-text">Even if the volume supports higher throughput, the EC2 instance must be EBS-optimized with sufficient EBS bandwidth to deliver that throughput. Both the volume and the instance must support the required throughput for the improvement to take effect.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">IOPS (I/O operations per second) governs the number of read/write operations, not the data transfer rate (MiB/s). For large sequential file writes like video transcoding, throughput is the bottleneck, not IOPS. Increasing IOPS would not resolve the 125 MiB/s ceiling.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">io2 volumes are designed for latency-sensitive, high-IOPS workloads such as databases. While io2 Block Express supports up to 4,000 MiB/s throughput, it is significantly more expensive than gp3 and over-provisioned for this use case. gp3 with increased throughput is the cost-effective solution.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">EBS Multi-Attach is only available for io1 and io2 Provisioned IOPS volumes, not gp3. It is designed for clustered applications that need concurrent access from multiple instances in the same AZ, not for improving write throughput from a single instance.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -151,10 +157,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: Provisioned concurrency keeps a specified number of Lambda execution environments initialized, warm, and ready to serve requests with no cold start. When hundreds of files arrive during peak hours, the pre-initialized environments handle invocations immediately. You pay for provisioned concurrency whether invoked or not, but it guarantees sub-millisecond start times for the provisioned count. This directly addresses the 3–5 second cold start problem.
-- Why B is wrong: Reserved concurrency sets a maximum cap on concurrent executions for a function — it does NOT pre-warm environments. When a new invocation arrives and no warm environment exists, a cold start still occurs. Reserved concurrency limits the blast radius of a function but does nothing to eliminate cold starts.
-- Why C is wrong: Increasing memory allocation gives the function more CPU proportionally and can speed up execution time, but it does not eliminate cold starts. Cold start latency is driven by the runtime initialization (loading the deployment package, initializing the runtime, running init code), not by the amount of memory allocated.
-- Why D is wrong: Deploying a Lambda function inside a VPC actually increases cold start time because Lambda must attach an Elastic Network Interface (ENI) to the VPC during initialization. While Hyperplane improvements have reduced VPC cold starts significantly, VPC deployment does not eliminate cold starts and adds latency compared to non-VPC functions.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">Provisioned concurrency keeps a specified number of Lambda execution environments initialized, warm, and ready to serve requests with no cold start. When hundreds of files arrive during peak hours, the pre-initialized environments handle invocations immediately. You pay for provisioned concurrency whether invoked or not, but it guarantees sub-millisecond start times for the provisioned count. This directly addresses the 3–5 second cold start problem.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Reserved concurrency sets a maximum cap on concurrent executions for a function — it does NOT pre-warm environments. When a new invocation arrives and no warm environment exists, a cold start still occurs. Reserved concurrency limits the blast radius of a function but does nothing to eliminate cold starts.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Increasing memory allocation gives the function more CPU proportionally and can speed up execution time, but it does not eliminate cold starts. Cold start latency is driven by the runtime initialization (loading the deployment package, initializing the runtime, running init code), not by the amount of memory allocated.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Deploying a Lambda function inside a VPC actually increases cold start time because Lambda must attach an Elastic Network Interface (ENI) to the VPC during initialization. While Hyperplane improvements have reduced VPC cold starts significantly, VPC deployment does not eliminate cold starts and adds latency compared to non-VPC functions.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -169,12 +175,12 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: Using a step scaling policy with shorter CloudWatch alarm evaluation periods (A) allows the Auto Scaling group to detect load changes faster and add capacity in graduated steps. Using a warm pool (E) keeps pre-initialized instances in a stopped or running state so they can be placed into service much faster than launching cold instances, which eliminates AMI boot time and application initialization delays.
-- Why A is correct: Step scaling policies react to alarm breaches with configurable step adjustments, and shortening the CloudWatch evaluation period (e.g., from 5 minutes to 1 minute) means the alarm triggers sooner. Combined, this significantly reduces reaction time.
-- Why B is wrong: Increasing the default cooldown period delays subsequent scaling actions, making the group slower to add more capacity — the opposite of what is needed.
-- Why C is wrong: Switching to a simple scaling policy is a downgrade. Simple scaling waits for the cooldown to expire before processing additional alarms, whereas step scaling can process alarms during cooldown and add capacity in proportion to the alarm breach size.
-- Why D is wrong: Increasing the health check grace period tells the Auto Scaling group to wait longer before checking instance health. This does not speed up scaling; it only delays when unhealthy instances are replaced.
-- Why E is correct: A warm pool pre-initializes instances so they are ready to serve traffic almost immediately when a scale-out event occurs, dramatically reducing launch latency.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">Using a step scaling policy with shorter CloudWatch alarm evaluation periods (A) allows the Auto Scaling group to detect load changes faster and add capacity in graduated steps. Using a warm pool (E) keeps pre-initialized instances in a stopped or running state so they can be placed into service much faster than launching cold instances, which eliminates AMI boot time and application initialization delays.</span></div>
+<div class="q-explain-item correct-exp"><span class="exp-label">✓ Why A is correct</span><span class="exp-text">Step scaling policies react to alarm breaches with configurable step adjustments, and shortening the CloudWatch evaluation period (e.g., from 5 minutes to 1 minute) means the alarm triggers sooner. Combined, this significantly reduces reaction time.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Increasing the default cooldown period delays subsequent scaling actions, making the group slower to add more capacity — the opposite of what is needed.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Switching to a simple scaling policy is a downgrade. Simple scaling waits for the cooldown to expire before processing additional alarms, whereas step scaling can process alarms during cooldown and add capacity in proportion to the alarm breach size.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Increasing the health check grace period tells the Auto Scaling group to wait longer before checking instance health. This does not speed up scaling; it only delays when unhealthy instances are replaced.</span></div>
+<div class="q-explain-item correct-exp"><span class="exp-label">✓ Why E is correct</span><span class="exp-text">A warm pool pre-initializes instances so they are ready to serve traffic almost immediately when a scale-out event occurs, dramatically reducing launch latency.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -188,11 +194,11 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: When instances appear unhealthy in the target group despite the application running, the most common cause is a health check misconfiguration. The ALB health check may be probing the wrong port (e.g., port 80 when the app listens on 443) or the wrong path (e.g., / instead of /health). Verifying the health check port and path against the application's actual configuration is the correct first troubleshooting step.
-- Why A is wrong: This is the correct answer.
-- Why B is wrong: The ALB being in one AZ would affect which instances receive traffic, but it would not cause registered targets to show as unhealthy. Targets are marked unhealthy based on health check responses, not AZ placement.
-- Why C is wrong: Instance size affects performance under load, not health check status. If the application is running and responding, the instance type is not the issue.
-- Why D is wrong: ALB access logs record request details for auditing and debugging, but disabling them does not affect health check results or target health status.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">When instances appear unhealthy in the target group despite the application running, the most common cause is a health check misconfiguration. The ALB health check may be probing the wrong port (e.g., port 80 when the app listens on 443) or the wrong path (e.g., / instead of /health). Verifying the health check port and path against the application's actual configuration is the correct first troubleshooting step.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">This is the correct answer.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">The ALB being in one AZ would affect which instances receive traffic, but it would not cause registered targets to show as unhealthy. Targets are marked unhealthy based on health check responses, not AZ placement.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Instance size affects performance under load, not health check status. If the application is running and responding, the instance type is not the issue.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">ALB access logs record request details for auditing and debugging, but disabling them does not affect health check results or target health status.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -206,10 +212,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why A is correct: AWS Backup provides a centralized, fully managed service that can back up EC2, RDS, EBS, and many other AWS resources from a single backup plan. You define backup rules (frequency, retention) and assign resources by tags or resource ARNs. This eliminates the need to manage separate backup mechanisms for each service.
-- Why B is wrong: Writing custom CLI scripts on an EC2 instance introduces operational overhead — you must maintain the EC2 instance, manage cron reliability, handle script failures, and build retention logic yourself. AWS Backup handles all of this natively.
-- Why C is wrong: Amazon DLM supports EBS snapshots and EBS-backed AMIs, but it does not support RDS backups. You would still need a separate mechanism for RDS, which does not meet the 'single location' requirement.
-- Why D is wrong: Lambda functions with EventBridge can automate snapshots, but you must write and maintain code for each service's API, implement error handling, and build retention/cleanup logic. AWS Backup provides this out of the box with far less operational overhead.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why A is correct</span><span class="exp-text">AWS Backup provides a centralized, fully managed service that can back up EC2, RDS, EBS, and many other AWS resources from a single backup plan. You define backup rules (frequency, retention) and assign resources by tags or resource ARNs. This eliminates the need to manage separate backup mechanisms for each service.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Writing custom CLI scripts on an EC2 instance introduces operational overhead — you must maintain the EC2 instance, manage cron reliability, handle script failures, and build retention logic yourself. AWS Backup handles all of this natively.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Amazon DLM supports EBS snapshots and EBS-backed AMIs, but it does not support RDS backups. You would still need a separate mechanism for RDS, which does not meet the 'single location' requirement.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Lambda functions with EventBridge can automate snapshots, but you must write and maintain code for each service's API, implement error handling, and build retention/cleanup logic. AWS Backup provides this out of the box with far less operational overhead.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -223,10 +229,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct (B): The Auto Scaling health check grace period prevents the ASG from marking newly launched instances as unhealthy before the application has finished initializing. During this grace period, Auto Scaling does not act on health check failures from the ALB, giving the application time to start up and pass health checks. Setting this value to exceed the application's startup time ensures instances are not prematurely terminated and replaced.
-- Why A is wrong: The ALB idle timeout controls how long the load balancer keeps an idle connection open. It does not affect when instances are health-checked or when they start receiving traffic.
-- Why C is wrong: The deregistration delay controls how long the ALB waits before removing a deregistering target, which applies during scale-in (instance removal), not during instance launch.
-- Why D is wrong: A scale-in cooldown prevents rapid scale-in after a scaling activity, but the problem described is instances failing health checks during scale-out, not premature scale-in.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct (B)</span><span class="exp-text">The Auto Scaling health check grace period prevents the ASG from marking newly launched instances as unhealthy before the application has finished initializing. During this grace period, Auto Scaling does not act on health check failures from the ALB, giving the application time to start up and pass health checks. Setting this value to exceed the application's startup time ensures instances are not prematurely terminated and replaced.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">The ALB idle timeout controls how long the load balancer keeps an idle connection open. It does not affect when instances are health-checked or when they start receiving traffic.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">The deregistration delay controls how long the ALB waits before removing a deregistering target, which applies during scale-in (instance removal), not during instance launch.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">A scale-in cooldown prevents rapid scale-in after a scaling activity, but the problem described is instances failing health checks during scale-out, not premature scale-in.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -240,10 +246,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct (B): When a stack enters UPDATE_ROLLBACK_FAILED, the normal rollback has stalled because CloudFormation cannot restore one or more resources to their previous state. The ContinueUpdateRollback API action resumes the rollback. If specific resources cannot be rolled back (for example, the original instance type is unavailable), the administrator can skip those resources using the --resources-to-skip parameter, allowing the rest of the stack to complete the rollback. The skipped resources will be left in their current state and marked as UPDATE_COMPLETE.
-- Why A is wrong: Deleting and recreating the stack is destructive and unnecessary. It would cause downtime and data loss for any stateful resources (such as databases or EBS volumes) unless DeletionPolicy is set to Retain. ContinueUpdateRollback is the purpose-built mechanism for recovering from this state.
-- Why C is wrong: Manually modifying resources outside of CloudFormation creates drift between the stack template and the actual resource state. CloudFormation does not automatically detect or reconcile manual changes. The stack would remain in UPDATE_ROLLBACK_FAILED state regardless of manual changes.
-- Why D is wrong: Creating a new stack with a different name does not fix the broken stack. The original stack remains in UPDATE_ROLLBACK_FAILED state and must still be resolved. Additionally, resources with fixed physical names would conflict between the old and new stacks.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct (B)</span><span class="exp-text">When a stack enters UPDATE_ROLLBACK_FAILED, the normal rollback has stalled because CloudFormation cannot restore one or more resources to their previous state. The ContinueUpdateRollback API action resumes the rollback. If specific resources cannot be rolled back (for example, the original instance type is unavailable), the administrator can skip those resources using the --resources-to-skip parameter, allowing the rest of the stack to complete the rollback. The skipped resources will be left in their current state and marked as UPDATE_COMPLETE.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Deleting and recreating the stack is destructive and unnecessary. It would cause downtime and data loss for any stateful resources (such as databases or EBS volumes) unless DeletionPolicy is set to Retain. ContinueUpdateRollback is the purpose-built mechanism for recovering from this state.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Manually modifying resources outside of CloudFormation creates drift between the stack template and the actual resource state. CloudFormation does not automatically detect or reconcile manual changes. The stack would remain in UPDATE_ROLLBACK_FAILED state regardless of manual changes.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Creating a new stack with a different name does not fix the broken stack. The original stack remains in UPDATE_ROLLBACK_FAILED state and must still be resolved. Additionally, resources with fixed physical names would conflict between the old and new stacks.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -257,10 +263,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: AWS Systems Manager Run Command lets you remotely execute commands on managed instances at scale without SSH. You can target instances by tags or resource groups, apply rate controls, and results are logged centrally in Systems Manager. This is the purpose-built service for automating operational tasks on existing resources.
-- Why B is wrong: SSH scripting requires managing keys, maintaining bastion hosts, and does not scale well across accounts. It lacks centralized logging, error handling, and rate control that Systems Manager provides natively.
-- Why C is wrong: Terminating and replacing instances causes downtime, loses instance-specific state, and is not patching existing resources—it is reprovisioning. This is disruptive and operationally expensive.
-- Why D is wrong: AWS Support does not apply OS-level patches on customer EC2 instances. Under the shared responsibility model, OS patching is the customer's responsibility.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">AWS Systems Manager Run Command lets you remotely execute commands on managed instances at scale without SSH. You can target instances by tags or resource groups, apply rate controls, and results are logged centrally in Systems Manager. This is the purpose-built service for automating operational tasks on existing resources.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">SSH scripting requires managing keys, maintaining bastion hosts, and does not scale well across accounts. It lacks centralized logging, error handling, and rate control that Systems Manager provides natively.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Terminating and replacing instances causes downtime, loses instance-specific state, and is not patching existing resources—it is reprovisioning. This is disruptive and operationally expensive.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">AWS Support does not apply OS-level patches on customer EC2 instances. Under the shared responsibility model, OS patching is the customer's responsibility.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -274,10 +280,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: EC2 Image Builder provides a fully managed pipeline that automates AMI creation. Build components install software, test components validate the image, and distribution settings automatically copy the resulting AMI to multiple Regions. Image Builder can be triggered when the base AMI changes, satisfying the automated rebuild requirement with minimal maintenance.
-- Why B is wrong: Manually launching instances and copying AMIs in each Region is time-consuming, error-prone, and does not automate rebuilds when the base AMI updates — it requires ongoing manual effort.
-- Why C is wrong: Snapshots are not AMIs. A snapshot of a root volume must still be registered as an AMI before it can launch instances. This approach also lacks automated testing and multi-Region distribution.
-- Why D is wrong: Using CloudFormation with custom resources to create AMIs in every Region independently works but requires significant custom code to handle image building, testing, and cross-Region distribution — far more maintenance than Image Builder's native capabilities.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">EC2 Image Builder provides a fully managed pipeline that automates AMI creation. Build components install software, test components validate the image, and distribution settings automatically copy the resulting AMI to multiple Regions. Image Builder can be triggered when the base AMI changes, satisfying the automated rebuild requirement with minimal maintenance.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Manually launching instances and copying AMIs in each Region is time-consuming, error-prone, and does not automate rebuilds when the base AMI updates — it requires ongoing manual effort.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Snapshots are not AMIs. A snapshot of a root volume must still be registered as an AMI before it can launch instances. This approach also lacks automated testing and multi-Region distribution.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Using CloudFormation with custom resources to create AMIs in every Region independently works but requires significant custom code to handle image building, testing, and cross-Region distribution — far more maintenance than Image Builder's native capabilities.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -292,12 +298,12 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: An IAM password policy allows administrators to enforce complexity requirements (minimum length, character types) and rotation intervals (maximum password age). These are both configurable settings within the IAM account password policy and directly address the compliance requirement.
-- Why A (Enforce minimum length and complexity) is correct: The IAM password policy supports setting minimum length (6–128 characters) and requiring uppercase, lowercase, numbers, and symbols.
-- Why B (Require all users to use access keys instead of passwords) is wrong: Replacing passwords with access keys does not address password compliance — it sidesteps the requirement rather than enforcing it. Access keys are for programmatic access, not console login.
-- Why C (Set maximum password age for rotation) is correct: The IAM password policy supports setting a maximum password age (1–1095 days), which enforces periodic rotation as required by the compliance mandate.
-- Why D (Use AWS Organizations SCP to block weak passwords) is wrong: SCPs control which AWS API actions are allowed or denied — they cannot enforce IAM password complexity or rotation rules. Password policy is an IAM account-level setting.
-- Why E (Enable MFA to replace password requirements) is wrong: MFA adds a second authentication factor but does not enforce password complexity or rotation. Both controls serve different purposes and MFA does not substitute for a password policy.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">An IAM password policy allows administrators to enforce complexity requirements (minimum length, character types) and rotation intervals (maximum password age). These are both configurable settings within the IAM account password policy and directly address the compliance requirement.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A (Enforce minimum length and complexity) is correct</span><span class="exp-text">The IAM password policy supports setting minimum length (6–128 characters) and requiring uppercase, lowercase, numbers, and symbols.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Explanation</span><span class="exp-text">Why B (Require all users to use access keys instead of passwords) is wrong: Replacing passwords with access keys does not address password compliance — it sidesteps the requirement rather than enforcing it. Access keys are for programmatic access, not console login.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C (Set maximum password age for rotation) is correct</span><span class="exp-text">The IAM password policy supports setting a maximum password age (1–1095 days), which enforces periodic rotation as required by the compliance mandate.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Explanation</span><span class="exp-text">Why D (Use AWS Organizations SCP to block weak passwords) is wrong: SCPs control which AWS API actions are allowed or denied — they cannot enforce IAM password complexity or rotation rules. Password policy is an IAM account-level setting.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Explanation</span><span class="exp-text">Why E (Enable MFA to replace password requirements) is wrong: MFA adds a second authentication factor but does not enforce password complexity or rotation. Both controls serve different purposes and MFA does not substitute for a password policy.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -311,10 +317,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: SSE-KMS with a customer managed key (CMK) gives the company full control over the key lifecycle — including custom rotation schedules, the ability to disable or schedule deletion of keys, and detailed usage auditing via CloudTrail. This meets the requirement for company-managed keys with immediate revocation capability.
-- Why A is wrong: SSE-S3 uses keys that AWS fully manages on your behalf. You cannot control rotation schedules, disable keys, or delete them — AWS handles everything transparently, so the company lacks the required key management control.
-- Why C is wrong: Storing encryption keys in EC2 environment variables is insecure — they can be exposed through instance metadata, process listings, or logs. This does not meet security best practices and provides no key lifecycle management.
-- Why D is wrong: SSE-S3 keys are entirely managed by AWS regardless of any rotation setting. You cannot disable rotation or manage S3-managed keys — they are opaque to the customer, so this option does not satisfy the requirement for company-managed keys.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">SSE-KMS with a customer managed key (CMK) gives the company full control over the key lifecycle — including custom rotation schedules, the ability to disable or schedule deletion of keys, and detailed usage auditing via CloudTrail. This meets the requirement for company-managed keys with immediate revocation capability.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">SSE-S3 uses keys that AWS fully manages on your behalf. You cannot control rotation schedules, disable keys, or delete them — AWS handles everything transparently, so the company lacks the required key management control.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Storing encryption keys in EC2 environment variables is insecure — they can be exposed through instance metadata, process listings, or logs. This does not meet security best practices and provides no key lifecycle management.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">SSE-S3 keys are entirely managed by AWS regardless of any rotation setting. You cannot disable rotation or manage S3-managed keys — they are opaque to the customer, so this option does not satisfy the requirement for company-managed keys.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -328,10 +334,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: AWS RAM enables sharing VPC subnets across accounts within an Organization. Participant accounts can launch resources (EC2 instances, RDS databases, Lambda functions, etc.) into shared subnets, but only the owner account can modify or delete the subnet itself. This enforces centralized network control while enabling application teams to deploy resources.
-- Why B is wrong: VPC peering connects two VPCs for routing traffic between them, but it does not share subnets. Each account would still own and manage its own subnets independently, defeating the goal of centralized network management.
-- Why C is wrong: StackSets can deploy identical subnets in each account, but each account would independently own its subnets. This means application teams could modify or delete their subnets, removing centralized control and increasing IP address waste through duplication.
-- Why D is wrong: Granting full VPC permissions in the central networking account violates the principle of least privilege. Application teams could modify shared networking infrastructure (route tables, NACLs, etc.), creating security and operational risks.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">AWS RAM enables sharing VPC subnets across accounts within an Organization. Participant accounts can launch resources (EC2 instances, RDS databases, Lambda functions, etc.) into shared subnets, but only the owner account can modify or delete the subnet itself. This enforces centralized network control while enabling application teams to deploy resources.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">VPC peering connects two VPCs for routing traffic between them, but it does not share subnets. Each account would still own and manage its own subnets independently, defeating the goal of centralized network management.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">StackSets can deploy identical subnets in each account, but each account would independently own its subnets. This means application teams could modify or delete their subnets, removing centralized control and increasing IP address waste through duplication.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Granting full VPC permissions in the central networking account violates the principle of least privilege. Application teams could modify shared networking infrastructure (route tables, NACLs, etc.), creating security and operational risks.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -345,10 +351,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: For EC2 instances in a public subnet to reach the internet, three things are required: (1) an internet gateway attached to the VPC, (2) a route in the subnet's route table sending 0.0.0.0/0 traffic to the internet gateway, and (3) instances must have a public IPv4 address (either auto-assigned or an Elastic IP). All three are necessary.
-- Why B is wrong: A NAT gateway is used for private subnets to allow outbound-only internet access. Instances behind a NAT gateway cannot receive inbound connections from the internet, which does not meet the requirement for a public-facing subnet.
-- Why C is wrong: Attaching an internet gateway alone is not sufficient. Without a route table entry directing 0.0.0.0/0 to the internet gateway and without public IPs on the instances, traffic will not flow to the internet.
-- Why D is wrong: Elastic IP addresses are public IPs, but without an internet gateway attached to the VPC, there is no path for traffic to reach the internet. The internet gateway is the component that enables communication between the VPC and the internet.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">For EC2 instances in a public subnet to reach the internet, three things are required: (1) an internet gateway attached to the VPC, (2) a route in the subnet's route table sending 0.0.0.0/0 traffic to the internet gateway, and (3) instances must have a public IPv4 address (either auto-assigned or an Elastic IP). All three are necessary.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">A NAT gateway is used for private subnets to allow outbound-only internet access. Instances behind a NAT gateway cannot receive inbound connections from the internet, which does not meet the requirement for a public-facing subnet.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Attaching an internet gateway alone is not sufficient. Without a route table entry directing 0.0.0.0/0 to the internet gateway and without public IPs on the instances, traffic will not flow to the internet.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Elastic IP addresses are public IPs, but without an internet gateway attached to the VPC, there is no path for traffic to reach the internet. The internet gateway is the component that enables communication between the VPC and the internet.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -362,10 +368,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: Latency-based routing evaluates latency between the user and each AWS Region, then returns the record for the Region with the lowest latency. This is the purpose-built policy for directing users to the fastest endpoint.
-- Why A is wrong: Simple routing returns a single record (or multiple in random order) with no intelligence about latency or health. It cannot direct users to the closest Region.
-- Why B is wrong: Weighted routing distributes traffic by percentage (e.g., 80/20). It does not measure or optimize for latency; it is used for load distribution or canary deployments.
-- Why D is wrong: Multivalue answer routing returns multiple healthy IP addresses and lets the client pick one randomly. It provides basic health-check filtering but does not optimize for latency.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">Latency-based routing evaluates latency between the user and each AWS Region, then returns the record for the Region with the lowest latency. This is the purpose-built policy for directing users to the fastest endpoint.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Simple routing returns a single record (or multiple in random order) with no intelligence about latency or health. It cannot direct users to the closest Region.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Weighted routing distributes traffic by percentage (e.g., 80/20). It does not measure or optimize for latency; it is used for load distribution or canary deployments.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Multivalue answer routing returns multiple healthy IP addresses and lets the client pick one randomly. It provides basic health-check filtering but does not optimize for latency.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -379,10 +385,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: When an instance in a private subnet cannot reach the internet, the most common cause is a missing or misconfigured route to a NAT gateway. The route table associated with the private subnet must contain a route for 0.0.0.0/0 pointing to a NAT gateway in a public subnet. Without this route, outbound traffic has no path to the internet.
-- Why A is wrong: Internet gateways (IGWs) are attached at the VPC level and provide internet access for public subnets. Adding a route to the IGW from a private subnet would expose instances directly to the internet, which defeats the purpose of a private subnet and is not the correct approach.
-- Why C is wrong: Security groups are stateful — if outbound traffic is allowed, the return traffic is automatically permitted. Security groups do not block return traffic for established connections, so this would not cause the described issue.
-- Why D is wrong: While VPC peering enables communication between VPCs, it does not provide internet access. VPC peering is used for private connectivity between VPCs, not for routing traffic to the internet.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">When an instance in a private subnet cannot reach the internet, the most common cause is a missing or misconfigured route to a NAT gateway. The route table associated with the private subnet must contain a route for 0.0.0.0/0 pointing to a NAT gateway in a public subnet. Without this route, outbound traffic has no path to the internet.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Internet gateways (IGWs) are attached at the VPC level and provide internet access for public subnets. Adding a route to the IGW from a private subnet would expose instances directly to the internet, which defeats the purpose of a private subnet and is not the correct approach.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Security groups are stateful — if outbound traffic is allowed, the return traffic is automatically permitted. Security groups do not block return traffic for established connections, so this would not cause the described issue.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">While VPC peering enables communication between VPCs, it does not provide internet access. VPC peering is used for private connectivity between VPCs, not for routing traffic to the internet.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -396,10 +402,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: Network ACLs are stateless and evaluated separately for inbound and outbound traffic. Even though the security group allows all outbound traffic, the NACL must also allow both the outbound request AND the inbound return traffic (on ephemeral ports). The default NACL allows all traffic, but if a custom NACL has been applied with restrictive rules — for example, missing an inbound allow rule for return traffic on ephemeral ports (1024-65535) — connectivity will fail. Since the question confirms the security group, route table, public IP, and IGW route are all correct, the NACL is the most likely remaining cause.
-- Why A is wrong: Both auto-assigned public IP addresses and Elastic IP addresses enable internet connectivity through an internet gateway. An Elastic IP provides a static address that persists across instance stop/start cycles, but either type works for internet access. The choice between them does not affect basic connectivity.
-- Why B is wrong: The local route for the VPC CIDR block is automatically present in every route table and cannot be removed or modified. It is always there by default, so it cannot be the cause of the issue.
-- Why D is wrong: If the internet gateway were not attached to the VPC, the 0.0.0.0/0 route pointing to it would show a 'blackhole' status in the route table. The question states the route table has a route to the IGW, implying the IGW is attached and the route is active.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">Network ACLs are stateless and evaluated separately for inbound and outbound traffic. Even though the security group allows all outbound traffic, the NACL must also allow both the outbound request AND the inbound return traffic (on ephemeral ports). The default NACL allows all traffic, but if a custom NACL has been applied with restrictive rules — for example, missing an inbound allow rule for return traffic on ephemeral ports (1024-65535) — connectivity will fail. Since the question confirms the security group, route table, public IP, and IGW route are all correct, the NACL is the most likely remaining cause.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Both auto-assigned public IP addresses and Elastic IP addresses enable internet connectivity through an internet gateway. An Elastic IP provides a static address that persists across instance stop/start cycles, but either type works for internet access. The choice between them does not affect basic connectivity.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">The local route for the VPC CIDR block is automatically present in every route table and cannot be removed or modified. It is always there by default, so it cannot be the cause of the issue.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">If the internet gateway were not attached to the VPC, the 0.0.0.0/0 route pointing to it would show a 'blackhole' status in the route table. The question states the route table has a route to the IGW, implying the IGW is attached and the route is active.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -413,10 +419,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct (B): AMIs are Region-specific resources. An AMI created in us-east-1 cannot be directly referenced by a launch template in us-west-2. The Auto Scaling group will fail to launch instances because it cannot find the specified AMI in its Region. The administrator must either copy the AMI to the target Region or update the launch template to reference a valid AMI in the current Region.
-- Why A is wrong: If the maximum capacity were reached, the scaling activity would show 'Failed' with a message about exceeding the max size, not an AMI-related error. The question states the policy was triggered, implying scaling should proceed.
-- Why C is wrong: A cooldown period prevents additional scaling activities, but it would not cause a launch failure once a scaling activity has already been initiated. The question states the policy was triggered.
-- Why D is wrong: ELB health check failures would cause instances to be terminated after launch, not prevent the launch itself. The issue is that instances are not being launched at all.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct (B)</span><span class="exp-text">AMIs are Region-specific resources. An AMI created in us-east-1 cannot be directly referenced by a launch template in us-west-2. The Auto Scaling group will fail to launch instances because it cannot find the specified AMI in its Region. The administrator must either copy the AMI to the target Region or update the launch template to reference a valid AMI in the current Region.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">If the maximum capacity were reached, the scaling activity would show 'Failed' with a message about exceeding the max size, not an AMI-related error. The question states the policy was triggered, implying scaling should proceed.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">A cooldown period prevents additional scaling activities, but it would not cause a launch failure once a scaling activity has already been initiated. The question states the policy was triggered.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">ELB health check failures would cause instances to be terminated after launch, not prevent the launch itself. The issue is that instances are not being launched at all.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -430,11 +436,11 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: In a Multi-AZ deployment, Amazon RDS automatically provisions and maintains a synchronous standby replica in a different Availability Zone. During a failover event (planned maintenance, instance failure, or AZ disruption), RDS automatically promotes the standby to primary and updates the DNS CNAME record so the existing endpoint resolves to the new primary. Applications reconnecting using the same endpoint are directed to the new primary with minimal downtime (typically 60-120 seconds).
-- Why A is wrong: This is the correct answer.
-- Why B is wrong: A Multi-AZ failover does not restore from a backup. The standby is a live, synchronously replicated copy of the primary, so promotion is near-instantaneous compared to a backup restore which could take significant time depending on database size.
-- Why C is wrong: The RDS endpoint (DNS CNAME) is automatically updated during failover. Applications using the RDS endpoint do not need manual reconfiguration — they simply reconnect to the same endpoint, which now resolves to the promoted standby.
-- Why D is wrong: Multi-AZ failover is fully automatic and does not require administrator intervention. RDS detects the failure and initiates failover autonomously.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">In a Multi-AZ deployment, Amazon RDS automatically provisions and maintains a synchronous standby replica in a different Availability Zone. During a failover event (planned maintenance, instance failure, or AZ disruption), RDS automatically promotes the standby to primary and updates the DNS CNAME record so the existing endpoint resolves to the new primary. Applications reconnecting using the same endpoint are directed to the new primary with minimal downtime (typically 60-120 seconds).</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">This is the correct answer.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">A Multi-AZ failover does not restore from a backup. The standby is a live, synchronously replicated copy of the primary, so promotion is near-instantaneous compared to a backup restore which could take significant time depending on database size.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">The RDS endpoint (DNS CNAME) is automatically updated during failover. Applications using the RDS endpoint do not need manual reconfiguration — they simply reconnect to the same endpoint, which now resolves to the promoted standby.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Multi-AZ failover is fully automatic and does not require administrator intervention. RDS detects the failure and initiates failover autonomously.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -449,10 +455,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: A dead-letter queue (DLQ) with a redrive policy (B) automatically moves messages that exceed the maxReceiveCount to a separate queue, isolating them for later inspection without data loss. A CloudWatch alarm on ApproximateNumberOfMessagesVisible for the DLQ (D) detects when messages land in the DLQ and notifies the operations team so they can investigate promptly. Together these two actions cover both isolation and alerting.
-- Why A is wrong: Increasing the visibility timeout only gives consumers more time to process a message before it becomes visible again. It does not isolate repeatedly failing messages — they will still loop back into the queue after each failed attempt.
-- Why C is wrong: Long polling reduces empty ReceiveMessage responses and lowers costs by waiting up to 20 seconds for messages to arrive, but it has no effect on isolating poison-pill messages or notifying the team.
-- Why E is wrong: Deleting messages after the first failure loses the message data permanently, preventing root-cause analysis. The requirement is to isolate failed messages for later analysis, not discard them.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">A dead-letter queue (DLQ) with a redrive policy (B) automatically moves messages that exceed the maxReceiveCount to a separate queue, isolating them for later inspection without data loss. A CloudWatch alarm on ApproximateNumberOfMessagesVisible for the DLQ (D) detects when messages land in the DLQ and notifies the operations team so they can investigate promptly. Together these two actions cover both isolation and alerting.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Increasing the visibility timeout only gives consumers more time to process a message before it becomes visible again. It does not isolate repeatedly failing messages — they will still loop back into the queue after each failed attempt.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Long polling reduces empty ReceiveMessage responses and lowers costs by waiting up to 20 seconds for messages to arrive, but it has no effect on isolating poison-pill messages or notifying the team.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why E is wrong</span><span class="exp-text">Deleting messages after the first failure loses the message data permanently, preventing root-cause analysis. The requirement is to isolate failed messages for later analysis, not discard them.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -466,10 +472,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: AWS CloudFormation drift detection compares the current state of stack resources against the expected template configuration. Running drift detection on the stack identifies which resources have been modified outside of CloudFormation, allowing the operations team to decide whether to update the template to match or revert the manual changes.
-- Why A is wrong: Deleting and recreating the stack would cause unnecessary downtime and data loss. Drift detection is designed to identify changes without requiring destructive actions.
-- Why B is wrong: Creating a new stack from the same template would deploy duplicate resources rather than identifying what changed in the existing stack. This does not solve the drift problem.
-- Why D is wrong: CloudTrail logs show who made API calls and when, but they do not compare the current resource state against the expected CloudFormation template configuration. Drift detection provides a structured comparison that CloudTrail cannot.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">AWS CloudFormation drift detection compares the current state of stack resources against the expected template configuration. Running drift detection on the stack identifies which resources have been modified outside of CloudFormation, allowing the operations team to decide whether to update the template to match or revert the manual changes.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Deleting and recreating the stack would cause unnecessary downtime and data loss. Drift detection is designed to identify changes without requiring destructive actions.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Creating a new stack from the same template would deploy duplicate resources rather than identifying what changed in the existing stack. This does not solve the drift problem.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">CloudTrail logs show who made API calls and when, but they do not compare the current resource state against the expected CloudFormation template configuration. Drift detection provides a structured comparison that CloudTrail cannot.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -483,10 +489,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: AWS Cost Explorer's rightsizing recommendations analyze historical CPU and memory utilization (via CloudWatch metrics) over the previous 14 days to identify EC2 instances that are underutilized. It recommends either downsizing to a smaller instance type within the same family or terminating idle instances, helping reduce costs without impacting performance.
-- Why A is wrong: Cost Explorer rightsizing uses actual CloudWatch utilization data (CPU, network, disk), not billing data alone. Billing data shows what you spent but not whether the instance was efficiently utilized.
-- Why C is wrong: Trusted Advisor does provide some cost optimization checks (e.g., low-utilization EC2 instances), but the question specifically asks about rightsizing recommendations, which is a dedicated Cost Explorer feature that provides more granular instance-level recommendations with specific target instance types.
-- Why D is wrong: AWS Budgets is designed for setting cost and usage thresholds and sending alerts when those thresholds are approached or exceeded. It does not analyze instance utilization or provide rightsizing recommendations.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">AWS Cost Explorer's rightsizing recommendations analyze historical CPU and memory utilization (via CloudWatch metrics) over the previous 14 days to identify EC2 instances that are underutilized. It recommends either downsizing to a smaller instance type within the same family or terminating idle instances, helping reduce costs without impacting performance.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Cost Explorer rightsizing uses actual CloudWatch utilization data (CPU, network, disk), not billing data alone. Billing data shows what you spent but not whether the instance was efficiently utilized.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Trusted Advisor does provide some cost optimization checks (e.g., low-utilization EC2 instances), but the question specifically asks about rightsizing recommendations, which is a dedicated Cost Explorer feature that provides more granular instance-level recommendations with specific target instance types.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">AWS Budgets is designed for setting cost and usage thresholds and sending alerts when those thresholds are approached or exceeded. It does not analyze instance utilization or provide rightsizing recommendations.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -500,10 +506,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: NACL rules are evaluated in order of rule number, lowest first. Rule 100 (deny all) is evaluated before rule 200 (allow HTTP), so HTTP traffic is denied before the allow rule is reached. Adding a new allow rule with a number lower than 100 (e.g., 90) ensures HTTP is permitted. NACL rule numbers cannot be edited in place—you must create a new rule and optionally delete the old one.
-- Why A is wrong: Removing the NACL entirely removes a defense-in-depth layer. The correct approach is to fix the rule ordering, not eliminate the NACL.
-- Why C is wrong: The security group is already correctly configured to allow port 80. The problem is with the NACL rule ordering.
-- Why D is wrong: NACL rules cannot be renumbered in place. You must create a new rule with the desired number and optionally delete the old one.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">NACL rules are evaluated in order of rule number, lowest first. Rule 100 (deny all) is evaluated before rule 200 (allow HTTP), so HTTP traffic is denied before the allow rule is reached. Adding a new allow rule with a number lower than 100 (e.g., 90) ensures HTTP is permitted. NACL rule numbers cannot be edited in place—you must create a new rule and optionally delete the old one.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Removing the NACL entirely removes a defense-in-depth layer. The correct approach is to fix the rule ordering, not eliminate the NACL.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">The security group is already correctly configured to allow port 80. The problem is with the NACL rule ordering.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">NACL rules cannot be renumbered in place. You must create a new rule with the desired number and optionally delete the old one.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -517,10 +523,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: AWS Network Firewall should be deployed in a dedicated firewall subnet in each Availability Zone. Traffic is routed through the firewall endpoints using VPC route table entries, allowing centralized stateful and stateless inspection of all traffic entering and leaving the protected subnets. This architecture follows AWS best practices for Network Firewall deployment.
-- Why A is wrong: Placing the firewall in the same subnet as the workloads does not allow traffic to be routed through the firewall endpoints before reaching the instances. Network Firewall requires a separate subnet so that route tables can direct traffic through its endpoints.
-- Why B is wrong: Network ACLs operate at Layer 3/4 and are stateless — they cannot perform deep packet inspection, intrusion detection/prevention (IDS/IPS), or domain-based filtering that Network Firewall provides. NACLs are useful for basic allow/deny rules but cannot replace a managed firewall service.
-- Why D is wrong: Security groups are stateful but operate at the instance (ENI) level only. They cannot inspect traffic between subnets or perform centralized traffic inspection with IDS/IPS signatures. Security groups also cannot filter by domain name or use Suricata-compatible rules.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">AWS Network Firewall should be deployed in a dedicated firewall subnet in each Availability Zone. Traffic is routed through the firewall endpoints using VPC route table entries, allowing centralized stateful and stateless inspection of all traffic entering and leaving the protected subnets. This architecture follows AWS best practices for Network Firewall deployment.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">Placing the firewall in the same subnet as the workloads does not allow traffic to be routed through the firewall endpoints before reaching the instances. Network Firewall requires a separate subnet so that route tables can direct traffic through its endpoints.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Network ACLs operate at Layer 3/4 and are stateless — they cannot perform deep packet inspection, intrusion detection/prevention (IDS/IPS), or domain-based filtering that Network Firewall provides. NACLs are useful for basic allow/deny rules but cannot replace a managed firewall service.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Security groups are stateful but operate at the instance (ENI) level only. They cannot inspect traffic between subnets or perform centralized traffic inspection with IDS/IPS signatures. Security groups also cannot filter by domain name or use Suricata-compatible rules.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -534,10 +540,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct (A): A manual approval action is a built-in CodePipeline action type specifically designed for this use case. When added to a pipeline stage, it pauses execution and optionally publishes a notification to an SNS topic. The designated approver can then approve or reject the deployment from the console, CLI, or API. The SNS topic sends email notifications to subscribers.
-- Why B is wrong: CloudWatch Events (EventBridge) can react to pipeline state changes but cannot pause a pipeline mid-execution to wait for human approval. It is a reactive notification mechanism, not an interactive gate.
-- Why C is wrong: While a Lambda function could theoretically send notifications, it cannot natively pause a pipeline stage and wait for a human response. This adds unnecessary complexity when CodePipeline already provides a purpose-built manual approval action.
-- Why D is wrong: CodeDeploy deployment groups handle deployment targeting and configuration. They do not provide a mechanism for pre-deployment manual approval within a pipeline workflow. Approval gates belong in the pipeline orchestration layer (CodePipeline), not the deployment layer (CodeDeploy).</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct (A)</span><span class="exp-text">A manual approval action is a built-in CodePipeline action type specifically designed for this use case. When added to a pipeline stage, it pauses execution and optionally publishes a notification to an SNS topic. The designated approver can then approve or reject the deployment from the console, CLI, or API. The SNS topic sends email notifications to subscribers.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">CloudWatch Events (EventBridge) can react to pipeline state changes but cannot pause a pipeline mid-execution to wait for human approval. It is a reactive notification mechanism, not an interactive gate.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">While a Lambda function could theoretically send notifications, it cannot natively pause a pipeline stage and wait for a human response. This adds unnecessary complexity when CodePipeline already provides a purpose-built manual approval action.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">CodeDeploy deployment groups handle deployment targeting and configuration. They do not provide a mechanism for pre-deployment manual approval within a pipeline workflow. Approval gates belong in the pipeline orchestration layer (CodePipeline), not the deployment layer (CodeDeploy).</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -551,11 +557,11 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: Amazon WorkSpaces requires specific network ports for its streaming protocols. PCoIP uses TCP/UDP port 4172 and WSP uses TCP/UDP port 4195. After a network change, security group or firewall modifications are the most common cause of connectivity failures and should be verified first.
-- Why A is wrong: This is the correct answer.
-- Why B is wrong: Recreating all WorkSpaces is destructive, time-consuming, and unnecessary for diagnosing a connectivity issue caused by a network change. The existing WorkSpaces configuration is likely fine.
-- Why C is wrong: Changing the bundle type affects compute and memory resources (vCPU, RAM, storage), not network connectivity. This would not resolve port-level access issues.
-- Why D is wrong: Disabling MFA would weaken security posture and is unrelated to port-level connectivity. MFA failures would produce authentication errors, not connection timeouts.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">Amazon WorkSpaces requires specific network ports for its streaming protocols. PCoIP uses TCP/UDP port 4172 and WSP uses TCP/UDP port 4195. After a network change, security group or firewall modifications are the most common cause of connectivity failures and should be verified first.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">This is the correct answer.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">Recreating all WorkSpaces is destructive, time-consuming, and unnecessary for diagnosing a connectivity issue caused by a network change. The existing WorkSpaces configuration is likely fine.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Changing the bundle type affects compute and memory resources (vCPU, RAM, storage), not network connectivity. This would not resolve port-level access issues.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Disabling MFA would weaken security posture and is unrelated to port-level connectivity. MFA failures would produce authentication errors, not connection timeouts.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -569,10 +575,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct: The recommended auto-remediation pattern is CloudWatch Alarm → EventBridge rule (matching alarm state change) → targets. EventBridge natively supports SSM Automation as a direct target, so the rule can start the remediation runbook without any custom Lambda code. EventBridge also supports multiple targets on a single rule, so the same alarm state change event can simultaneously notify the operations team via SNS and trigger the SSM Automation runbook. This is event-driven, loosely coupled, fully managed, and requires no polling or custom code.
-- Why B is wrong: CloudWatch alarms cannot directly invoke SSM Automation runbooks. Alarms support a limited set of actions: SNS, EC2 actions, Auto Scaling actions, and Systems Manager OpsItems/Incidents. You need EventBridge as an intermediary to trigger SSM Automation.
-- Why C is wrong: CloudWatch Logs subscription filters monitor log data streams, not alarm state changes. Using Run Command on individual instances is less scalable and harder to manage than SSM Automation runbooks, which can target multiple instances and handle complex workflows.
-- Why D is wrong: Polling CloudWatch alarms on a schedule introduces latency (up to 60 seconds) and is an anti-pattern compared to event-driven architectures. It also incurs unnecessary Lambda invocations and CloudWatch API calls when no alarms are active.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct</span><span class="exp-text">The recommended auto-remediation pattern is CloudWatch Alarm → EventBridge rule (matching alarm state change) → targets. EventBridge natively supports SSM Automation as a direct target, so the rule can start the remediation runbook without any custom Lambda code. EventBridge also supports multiple targets on a single rule, so the same alarm state change event can simultaneously notify the operations team via SNS and trigger the SSM Automation runbook. This is event-driven, loosely coupled, fully managed, and requires no polling or custom code.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">CloudWatch alarms cannot directly invoke SSM Automation runbooks. Alarms support a limited set of actions: SNS, EC2 actions, Auto Scaling actions, and Systems Manager OpsItems/Incidents. You need EventBridge as an intermediary to trigger SSM Automation.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">CloudWatch Logs subscription filters monitor log data streams, not alarm state changes. Using Run Command on individual instances is less scalable and harder to manage than SSM Automation runbooks, which can target multiple instances and handle complex workflows.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Polling CloudWatch alarms on a schedule introduces latency (up to 60 seconds) and is an anti-pattern compared to event-driven architectures. It also incurs unnecessary Lambda invocations and CloudWatch API calls when no alarms are active.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -586,10 +592,10 @@ details summary { color: #60a5fa; font-weight: 600; font-size: 0.95rem; padding:
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why B is correct: AWS Systems Manager Automation runbooks codify manual operational procedures into repeatable, auditable, and executable documents. The runbook can automatically collect logs to S3, restart the failed service, verify recovery, and escalate by creating an OpsItem if the issue persists. This directly implements the Operational Excellence principle of 'perform operations as code,' reducing MTTR and eliminating variation between engineers.
-- Why A is wrong: An SNS notification only alerts the engineer—it does not automate any remediation steps. The engineer must still manually SSH in and perform the same inconsistent steps, so MTTR remains high.
-- Why C is wrong: Local shell scripts on each instance are not centrally managed, lack audit trails, and are difficult to maintain across a fleet. If an instance becomes unreachable, the local script cannot execute. This approach also does not integrate with AWS operational services for visibility.
-- Why D is wrong: Terminating and replacing instances via Auto Scaling is appropriate for stateless workloads but does not address the goal of consistent, documented response procedures. It may cause data loss on stateful instances and does not capture diagnostic information for root cause analysis.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why B is correct</span><span class="exp-text">AWS Systems Manager Automation runbooks codify manual operational procedures into repeatable, auditable, and executable documents. The runbook can automatically collect logs to S3, restart the failed service, verify recovery, and escalate by creating an OpsItem if the issue persists. This directly implements the Operational Excellence principle of 'perform operations as code,' reducing MTTR and eliminating variation between engineers.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why A is wrong</span><span class="exp-text">An SNS notification only alerts the engineer—it does not automate any remediation steps. The engineer must still manually SSH in and perform the same inconsistent steps, so MTTR remains high.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">Local shell scripts on each instance are not centrally managed, lack audit trails, and are difficult to maintain across a fleet. If an instance becomes unreachable, the local script cannot execute. This approach also does not integrate with AWS operational services for visibility.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">Terminating and replacing instances via Auto Scaling is appropriate for stateless workloads but does not address the goal of consistent, documented response procedures. It may cause data loss on stateful instances and does not capture diagnostic information for root cause analysis.</span></div></div>
 </details>
 </div>
 <div class="q-card">
@@ -604,11 +610,11 @@ E: Export the logs to S3 every 5 minutes and use a Lambda function to parse erro
 </ul>
 <details>
 <summary>Show Explanation</summary>
-<div class="q-explain"><p>- Why correct (A): CloudWatch Logs metric filters scan incoming log events for specific patterns and extract custom metrics from them. Once a metric is created, you can set a CloudWatch alarm on that metric with a threshold of 5 in a 5-minute period. This is the native, purpose-built solution for converting log patterns into alarms.
-- Why B is wrong: CloudWatch Logs Insights is an ad-hoc interactive query tool. It does not natively support scheduled queries that trigger alarms. You would need additional orchestration (Lambda + EventBridge) to approximate this, which adds unnecessary complexity.
-- Why C is wrong: EventBridge does not directly monitor CloudWatch Logs content for patterns. EventBridge processes structured events from AWS services, not raw log data. You would still need a metric filter or subscription filter to bridge logs to EventBridge.
-- Why D is wrong: CloudWatch Contributor Insights identifies top-N contributors from log or CloudWatch data, but it does not create alarms based on pattern-match counts. It is designed for identifying top talkers, not threshold-based alerting on specific error patterns.
-- Why E is wrong: Exporting logs to S3 is a batch operation and introduces significant delay (log export can take hours). This approach cannot reliably detect errors within a 5-minute window and adds unnecessary infrastructure.</p></div>
+<div class="q-explain"><div class="q-explain-item correct-exp"><span class="exp-label">✓ Why correct (A)</span><span class="exp-text">CloudWatch Logs metric filters scan incoming log events for specific patterns and extract custom metrics from them. Once a metric is created, you can set a CloudWatch alarm on that metric with a threshold of 5 in a 5-minute period. This is the native, purpose-built solution for converting log patterns into alarms.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why B is wrong</span><span class="exp-text">CloudWatch Logs Insights is an ad-hoc interactive query tool. It does not natively support scheduled queries that trigger alarms. You would need additional orchestration (Lambda + EventBridge) to approximate this, which adds unnecessary complexity.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why C is wrong</span><span class="exp-text">EventBridge does not directly monitor CloudWatch Logs content for patterns. EventBridge processes structured events from AWS services, not raw log data. You would still need a metric filter or subscription filter to bridge logs to EventBridge.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why D is wrong</span><span class="exp-text">CloudWatch Contributor Insights identifies top-N contributors from log or CloudWatch data, but it does not create alarms based on pattern-match counts. It is designed for identifying top talkers, not threshold-based alerting on specific error patterns.</span></div>
+<div class="q-explain-item wrong-exp"><span class="exp-label">✗ Why E is wrong</span><span class="exp-text">Exporting logs to S3 is a batch operation and introduces significant delay (log export can take hours). This approach cannot reliably detect errors within a 5-minute window and adds unnecessary infrastructure.</span></div></div>
 </details>
 </div>
 
